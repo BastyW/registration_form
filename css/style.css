@@ -7,7 +7,9 @@ form {
     background-color: #c1bdba;
     background-image: linear-gradient(#c1bdba, #8AA6BF, #c1bdba);
 }
-
+h1, .form-label {
+    font-weight: bold;
+}
 .container {
     background-color: #F2EFE9;
     height: 100%;
