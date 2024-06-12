@@ -301,7 +301,7 @@ function validar_aficiones() {
 };
 
 function agregar_aficion() {
-    var aficion = document.getElementById('input-aficiones').value;
+    var aficion = document.getElementById('input-aficiones').value.toLowerCase();
     var div_error_aficiones = document.getElementById('error-aficiones');
     var div_ul_aficiones = document.getElementById('ul-aficiones');
     var lista = document.createElement('li');
