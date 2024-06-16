@@ -237,7 +237,7 @@ function validar_telefono() {
         div_error_telefono.className = 'text-danger small mt-1';
         return false;
     } else if (telefono.substring(0,3) != '+56')/**numeros.indexOf(numero_inicial) == -1) **/{
-        div_error_telefono.innerHTML = 'El teléfono debe formato de Chile.';
+        div_error_telefono.innerHTML = 'El teléfono debe tener el formato de Chile.';
         div_error_telefono.className = 'text-danger small mt-1';
         return false;
 
