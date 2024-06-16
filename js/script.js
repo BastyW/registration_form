@@ -283,12 +283,8 @@ function validar_comuna() {
 
 var lista_aficiones = [];
 function validar_aficiones() {
-    var aficiones = document.getElementById('input-aficiones').value;
     var div_error_aficiones = document.getElementById('error-aficiones');
     
-    // console.log(Array(aficiones));
-    // lista_aficiones.push(aficiones);
-    // console.log(lista_aficiones)
     if (lista_aficiones.length < 2) {
         div_error_aficiones.innerHTML = 'Debe ingresar al menos dos aficiones.';
         div_error_aficiones.className = 'text-danger small mt-1';
@@ -297,57 +293,104 @@ function validar_aficiones() {
         div_error_aficiones.innerHTML = '';
         return true;
     }
-    
-};
+}
 
 function agregar_aficion() {
-    var aficion = document.getElementById('input-aficiones').value.toLowerCase();
+    var aficiones = document.getElementById('input-aficiones').value;
     var div_error_aficiones = document.getElementById('error-aficiones');
     var div_ul_aficiones = document.getElementById('ul-aficiones');
-    var lista = document.createElement('li');
 
-    if (aficion == '') {
-        div_error_aficiones.innerHTML = 'La afición no puede estar vacia.';
+    if (aficiones == '') {
+        div_error_aficiones.innerHTML = 'La afición no puede estar vacía.';
         div_error_aficiones.className = 'text-danger small mt-1';
-    } else if (lista_aficiones.includes(aficion)) {
-        div_error_aficiones.innerHTML = 'La aficion ya esta en la lista.'
-        div_error_aficiones.className = 'text-danger small mt-1';
-    } else {
-        lista_aficiones.push(aficion);
+        return;
+    }
+
+    // Separar las aficiones por comas y eliminar espacios en blanco adicionales
+    var aficiones_array = aficiones.split(',').map(aficion => aficion.trim());
+
+    var errores = [];
+    aficiones_array.forEach(aficion => {
+        if (aficion == '') {
+            errores.push('La afición no puede estar vacía.');
+            return;
+        }
+
+        if (lista_aficiones.includes(aficion.toLowerCase())) {
+            errores.push(`La afición "${aficion}" ya está en la lista.`);
+            return;
+        }
+
+        lista_aficiones.push(aficion.toLowerCase());
+
+        var lista = document.createElement('li');
         lista.className = 'list-group-item list-group-item-success col-6';
         lista.appendChild(document.createTextNode(aficion));
         div_ul_aficiones.appendChild(lista);
+    });
+
+    if (errores.length > 0) {
+        div_error_aficiones.innerHTML = errores.join('<br>');
+        div_error_aficiones.className = 'text-danger small mt-1';
+    } else {
         document.getElementById('input-aficiones').value = '';
         div_error_aficiones.innerHTML = '';
     }
-};
+}
+
+
 
 function validar_url() {
     var url = document.getElementById('input-url').value;
     var div_error_url = document.getElementById('error-url');
 
-    // Del 
     const isValidUrl = urlString => {
         let url;
         try {
+            // Si la URL no empieza con 'http://' o 'https://', se le añade 'http://'
+            if (!urlString.startsWith('http://') && !urlString.startsWith('https://')) {
+                urlString = 'http://' + urlString;
+            }
             url = new URL(urlString);
+
+            // Verificar que la URL tiene un dominio válido
+            const hostname = url.hostname;
+
+            // Eliminar el prefijo 'www.' si está presente
+            const domain = hostname.startsWith('www.') ? hostname.slice(4) : hostname;
+
+            // Verificar que el dominio contiene al menos un punto y no empieza ni termina con él
+            if (!domain.includes('.') || domain.startsWith('.') || domain.endsWith('.')) {
+                return false;
+            }
+
+            // Asegurarse de que el dominio tenga al menos dos partes separadas por puntos
+            const parts = domain.split('.');
+            if (parts.length < 2 || parts.some(part => part === '')) {
+                return false;
+            }
+
+            // Verificar que la extensión del dominio tenga al menos dos caracteres
+            const extension = parts[parts.length - 1];
+            if (extension.length < 2) {
+                return false;
+            }
         }
-        catch(e){
-            return false
+        catch(e) {
+            return false;
         }
         return url.protocol === 'http:' || url.protocol === 'https:';
     };
 
-    if (url == ''){
-        div_error_url.innerHTML = ''
+    if (url == '') {
+        div_error_url.innerHTML = '';
         return true;
-        
     } else if (!isValidUrl(url)) {
-        div_error_url.innerHTML = 'El formato de URL es incorrecto.'
-        div_error_url.className = 'text-danger small mt-1'
+        div_error_url.innerHTML = 'El formato de URL es incorrecto.';
+        div_error_url.className = 'text-danger small mt-1';
         return false;
     } else {
-        div_error_url.innerHTML = ''
+        div_error_url.innerHTML = '';
         return true;
     }
 };
