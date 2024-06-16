@@ -229,42 +229,49 @@ function validar_direccion() {
 function validar_telefono() {
     var telefono = document.getElementById('input-telefono').value;
     var div_error_telefono = document.getElementById('error-telefono');
-    var numeros = ' +0123456789'
-    // var numero_inicial = telefono.indexOf(2);
 
     if (telefono == '') {
         div_error_telefono.innerHTML = 'El campo teléfono es obligatorio.';
         div_error_telefono.className = 'text-danger small mt-1';
         return false;
-    } else if (telefono.substring(0,3) != '+56')/**numeros.indexOf(numero_inicial) == -1) **/{
-        div_error_telefono.innerHTML = 'El teléfono debe tener el formato de Chile.';
-        div_error_telefono.className = 'text-danger small mt-1';
-        return false;
+    }
 
-    } else if (telefono.length != 12) {
-        div_error_telefono.innerHTML = 'Formato de teléfono incorrecto.';
+    // Limpiar la entrada eliminando todos los caracteres no numéricos y espacios
+    var telefono_limpio = '';
+    for (var i = 0; i < telefono.length; i++) {
+        var char = telefono.charAt(i);
+        if (!isNaN(char) && char != ' ') {
+            telefono_limpio += char;
+        }
+    }
+
+    // Determinar el máximo de dígitos permitidos según el prefijo
+    var maximo_digitos;
+    if (telefono_limpio.startsWith('9')) {
+        maximo_digitos = 9;
+    } else if (telefono_limpio.startsWith('56')) {
+        maximo_digitos = 11;
+    } else if (telefono_limpio.startsWith('+56')) {
+        maximo_digitos = 12
+    }else {
+        div_error_telefono.innerHTML = 'El teléfono debe comenzar con 9, 56 o +56.';
         div_error_telefono.className = 'text-danger small mt-1';
         return false;
-    }else{
-        // i se posiciona donde haya un número, al final si no hay ninguno
-        var i = 0;
-        while (i < telefono.length && numeros.indexOf(telefono.charAt(i)) != -1) {
-            i++;
-        }
-        // Si antes i encontro un numero y despues de eso hay letras, retorna falso
-        while (i < telefono.length) {
-            if (numeros.indexOf(telefono.charAt(i)) == -1) {
-                div_error_telefono.innerHTML = 'El telefono no puede tener caracteres.';
-                div_error_telefono.className = 'text-danger small mt-1';
-                return false;
-            }
-            i++;
-        };
-    };
+    }
+
+    // Verificar que el teléfono no supere el máximo de dígitos permitidos
+    if (telefono_limpio.length > maximo_digitos) {
+        div_error_telefono.innerHTML = `El teléfono no puede tener más de ${maximo_digitos} dígitos.`;
+        div_error_telefono.className = 'text-danger small mt-1';
+        return false;
+    }
 
     div_error_telefono.innerHTML = '';
     return true;
-};
+}
+
+
+
 
 
 function validar_comuna() {
